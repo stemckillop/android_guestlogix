@@ -16,4 +16,20 @@ public class Episode {
         this.characters = characters;
         this.url = url;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEpisode() {
+        return episode;
+    }
+
+    public void setEpisode(String episode) {
+        this.episode = episode;
+    }
 }

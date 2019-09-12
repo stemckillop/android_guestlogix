@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
     android:orientation="horizontal">
 
     <TextView
@@ -23,7 +24,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
-        android:text="Episode Name"
+        android:padding="8dp"
+        android:text="asdflkjhasdklfhaslgjkhs"
         android:textColor="@color/rickMortyTitleTextForeground"
         android:textSize="30sp"
         android:textStyle="bold"
