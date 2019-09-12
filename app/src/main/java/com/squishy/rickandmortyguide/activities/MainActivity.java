@@ -1,4 +1,4 @@
-package com.squishy.rickandmortyguide;
+package com.squishy.rickandmortyguide.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.android.volley.Response;
+import com.squishy.rickandmortyguide.MyApp;
+import com.squishy.rickandmortyguide.R;
 import com.squishy.rickandmortyguide.adapter.EpisodeAdapter;
 import com.squishy.rickandmortyguide.models.Episode;
 import com.squishy.rickandmortyguide.requests.GetEpisodes;
@@ -75,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
                         episodes.add(new Episode(id, name, e, characters, url));
                     }
 
-                    myEpisodeAdapter = new EpisodeAdapter(episodes);
+                    myEpisodeAdapter = new EpisodeAdapter(getApplicationContext(), episodes);
                     myListView.setAdapter(myEpisodeAdapter);
                     updateUI();
 

@@ -1,6 +1,9 @@
 package com.squishy.rickandmortyguide.models;
 
-public class Episode {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Episode implements Parcelable {
 
     private int id;
     private String name;
@@ -17,6 +20,30 @@ public class Episode {
         this.url = url;
     }
 
+    protected Episode(Parcel in) {
+        id = in.readInt();
+        name = in.readString();
+        episode = in.readString();
+        characters = in.createStringArray();
+        url = in.readString();
+    }
+
+    public static final Creator<Episode> CREATOR = new Creator<Episode>() {
+        @Override
+        public Episode createFromParcel(Parcel in) {
+            return new Episode(in);
+        }
+
+        @Override
+        public Episode[] newArray(int size) {
+            return new Episode[size];
+        }
+    };
+
+    public String[] getCharacters() { return characters; }
+
+    public void setCharacters(String[] chars) { characters = chars; }
+
     public String getName() {
         return name;
     }
@@ -31,5 +58,19 @@ public class Episode {
 
     public void setEpisode(String episode) {
         this.episode = episode;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeString(name);
+        parcel.writeString(episode);
+        parcel.writeStringArray(characters);
+        parcel.writeString(url);
     }
 }

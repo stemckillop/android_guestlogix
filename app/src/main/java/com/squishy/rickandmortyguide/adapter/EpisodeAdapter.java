@@ -1,5 +1,8 @@
 package com.squishy.rickandmortyguide.adapter;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,12 +11,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squishy.rickandmortyguide.activities.EpisodeActivity;
 import com.squishy.rickandmortyguide.R;
 import com.squishy.rickandmortyguide.models.Episode;
 
 import java.util.ArrayList;
 
 public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.MyViewHolder> {
+    public Context ctx;
     private ArrayList<Episode> dataset;
 
     public void addEpisodes(ArrayList<Episode> epi) {
@@ -32,7 +37,8 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.MyViewHo
         }
     }
 
-    public EpisodeAdapter(ArrayList<Episode> data) {
+    public EpisodeAdapter(Context ctx, ArrayList<Episode> data) {
+        this.ctx = ctx;
         this.dataset = data;
     }
 
@@ -46,11 +52,19 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.MyViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
 
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ctx, EpisodeActivity.class);
+                intent.putExtra("episode", dataset.get(position));
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                ctx.startActivity(intent);
+            }
+        });
         holder.seasonLbl.setText(dataset.get(position).getEpisode());
         holder.titleLbl.setText(dataset.get(position).getName());
-
     }
 
     @Override
