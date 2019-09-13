@@ -15,10 +15,14 @@ import com.android.volley.Response;
 import com.squishy.rickandmortyguide.MyApp;
 import com.squishy.rickandmortyguide.R;
 import com.squishy.rickandmortyguide.adapter.CharacterAdapter;
+import com.squishy.rickandmortyguide.models.Character;
 import com.squishy.rickandmortyguide.models.Episode;
 import com.squishy.rickandmortyguide.requests.GetCharacters;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class EpisodeActivity extends AppCompatActivity {
     private static String TAG = "EpisodeActivity";
@@ -27,11 +31,10 @@ public class EpisodeActivity extends AppCompatActivity {
 
     private RecyclerView aliveList;
     private RecyclerView deadList;
-    private CharacterAdapter aliveAdapter;
-    private CharacterAdapter deadAdapter;
+    public CharacterAdapter aliveAdapter;
+    public CharacterAdapter deadAdapter;
 
     private TextView lblTitle;
-    private TextView lblBack;
 
 
     @Override
@@ -51,7 +54,6 @@ public class EpisodeActivity extends AppCompatActivity {
             episode = i.getParcelableExtra("episode");
             Log.e(TAG, episode.getName());
             lblTitle.setText(episode.getName());
-            lblBack.setText(episode.getName());
             getEpisodeCharacters();
 
         } catch (NullPointerException e) {
@@ -77,12 +79,63 @@ public class EpisodeActivity extends AppCompatActivity {
     }
 
     void getEpisodeCharacters() {
-        app.netQueue.add(new GetCharacters(this, getCharacterString(episode.getCharacters()), new Response.Listener<JSONObject>() {
+
+        app.netQueue.add(new GetCharacters(this, getCharacterString(episode.getCharacters()), new Response.Listener<JSONArray>() {
             @Override
-            public void onResponse(JSONObject response) {
-                
+            public void onResponse(JSONArray response) {
+                final ArrayList<Character> alive = new ArrayList<>();
+                final ArrayList<Character> dead = new ArrayList<>();
+
+                for (int i= 0; i < response.length(); i++) {
+                    try {
+                        JSONObject obj = response.getJSONObject(i);
+                        String stat = obj.getString("status");
+                        String name = obj.getString("name");
+                        String url = obj.getString("image");
+                        String create = obj.getString("created");
+                        String from = obj.getJSONObject("origin").getString("name");
+                        String spe = obj.getString("species");
+                        Character cha = new Character(name, stat, url, create, from, spe);
+
+                        if (cha.status.equals("Alive")) {
+                            Log.e(TAG, "Alive");
+                            alive.add(cha);
+                        } else {
+                            Log.e(TAG, "Dead");
+                            dead.add(cha);
+                        }
+                    } catch (Exception e) {
+
+                    }
+                }
+
+                aliveAdapter = new CharacterAdapter(EpisodeActivity.this, alive);
+                deadAdapter = new CharacterAdapter(EpisodeActivity.this, dead);
+                aliveList.setAdapter(aliveAdapter);
+                deadList.setAdapter(deadAdapter);
+
             }
+
+
         }));
 
+    }
+
+    public void killCharacter(int position) {
+        Character cha = aliveAdapter.characters.get(position);
+        cha.status = "Dead";
+        aliveAdapter.characters.remove(position);
+        deadAdapter.characters.add(cha);
+        aliveAdapter.notifyDataSetChanged();
+        deadAdapter.notifyDataSetChanged();
+    }
+
+    public void reviveCharacter(int position) {
+        Character cha = deadAdapter.characters.get(position);
+        cha.status = "Alive";
+        deadAdapter.characters.remove(position);
+        aliveAdapter.characters.add(cha);
+        aliveAdapter.notifyDataSetChanged();
+        deadAdapter.notifyDataSetChanged();
     }
 }

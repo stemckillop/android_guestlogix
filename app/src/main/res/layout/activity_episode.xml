@@ -19,12 +19,18 @@
 
     <TextView
         android:id="@+id/episode_lbl_title"
-        android:layout_width="wrap_content"
-        android:layout_height="64dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:gravity="center"
-        android:text="Episode Title"
+        android:padding="8dp"
+        android:text="aoxifhaskljrfhaskldfhklasjdjhgfjhkfjhfhjfh"
         android:textColor="@color/rickMortyTitleTextForeground"
-        android:textSize="32sp"
+        android:textSize="28sp"
         app:fontFamily="@font/rick"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -36,6 +42,7 @@
         android:layout_height="40dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:orientation="horizontal"
@@ -83,38 +90,25 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/episode_alive_list"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
-            tools:listitem="@layout/listview_alive">
-
-        </androidx.recyclerview.widget.RecyclerView>
-
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/episode_dead_list"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
             tools:listitem="@layout/listview_dead">
 
         </androidx.recyclerview.widget.RecyclerView>
 
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/episode_dead_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            tools:listitem="@layout/listview_dead">
+
+        </androidx.recyclerview.widget.RecyclerView>
 
     </LinearLayout>
 
