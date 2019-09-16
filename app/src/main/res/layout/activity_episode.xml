@@ -36,6 +36,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/episode_lbl_char"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Characters"
+        android:textColor="@color/rickMortyTitleTextForeground"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:fontFamily="casual"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/episode_lbl_title" />
+
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
@@ -48,7 +62,7 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="@+id/episode_background"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/episode_lbl_title">
+        app:layout_constraintTop_toBottomOf="@+id/episode_lbl_char">
 
         <TextView
             android:id="@+id/episode_lbl_alive"
@@ -59,7 +73,6 @@
             android:text="Alive"
             android:textColor="@color/rickMortyTitleTextForeground"
             android:textSize="24sp"
-            android:textStyle="bold"
             app:fontFamily="casual" />
 
         <TextView
@@ -71,11 +84,11 @@
             android:text="Dead"
             android:textColor="@color/rickMortyTitleTextForeground"
             android:textSize="24sp"
-            android:textStyle="bold"
             app:fontFamily="casual" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/episode_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
@@ -111,6 +124,36 @@
         </androidx.recyclerview.widget.RecyclerView>
 
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/episode_img_portal"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="64dp"
+        android:layout_marginRight="24dp"
+        android:scaleType="fitCenter"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/episode_list"
+        app:srcCompat="@drawable/portal" />
+
+    <TextView
+        android:id="@+id/episode_lbl_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Loading..."
+        android:textColor="@color/rickMortyTitleTextForeground"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        app:fontFamily="casual"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/episode_img_portal" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

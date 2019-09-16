@@ -3,6 +3,8 @@ package com.squishy.rickandmortyguide.adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.nfc.Tag;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,16 +21,19 @@ import com.squishy.rickandmortyguide.activities.EpisodeActivity;
 import com.squishy.rickandmortyguide.dialog.CharacterDialog;
 import com.squishy.rickandmortyguide.models.Character;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class CharacterAdapter extends RecyclerView.Adapter<CharacterAdapter.MyViewHolder> {
 
+    private static String TAG = "CharacterAdapter";
     public Context ctx;
     public ArrayList<Character> characters;
 
-    public CharacterAdapter(Context ctx, ArrayList<Character> alive) {
+    public CharacterAdapter(Context ctx, ArrayList<Character> chars, boolean alive) {
         this.ctx = ctx;
-        this.characters = alive;
+        this.characters = chars;
     }
 
     @NonNull
@@ -44,6 +49,14 @@ public class CharacterAdapter extends RecyclerView.Adapter<CharacterAdapter.MyVi
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                Log.e(TAG, characters.get(position).created);
+                SimpleDateFormat d = new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ss.SSS'Z'");
+                try {
+                    Date date = d.parse(characters.get(position).created);
+                } catch (Exception e) {
+                    Log.e(TAG, "Failed on simple date format");
+                }
 
                 CharacterDialog frag = new CharacterDialog();
                 frag.character = characters.get(position);

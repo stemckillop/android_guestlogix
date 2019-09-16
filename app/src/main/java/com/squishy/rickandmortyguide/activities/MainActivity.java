@@ -7,6 +7,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.squishy.rickandmortyguide.MyApp;
@@ -29,12 +35,16 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView myListView;
     private EpisodeAdapter myEpisodeAdapter;
     private RecyclerView.LayoutManager myLayoutManager;
+    private ImageView loadingPortal;
+    private TextView loadingLbl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        loadingPortal = findViewById(R.id.main_img_portal);
+        loadingLbl = findViewById(R.id.main_lbl_loading);
         myListView = findViewById(R.id.main_list_episodes);
         myListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -53,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void getEpisodes() {
+        openLoadingPortal();
         MyApp app = (MyApp)getApplicationContext();
         app.netQueue.add(new GetEpisodes(this, new Response.Listener<JSONObject>() {
             @Override
@@ -89,9 +100,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void getNextEpisodes() {
+
+
         if (next.equals("")) {
             return;
         }
+
+        loadingLbl.setText("Loading more...");
+        openLoadingPortal();
+        myListView.setVisibility(View.INVISIBLE);
+
         MyApp app = (MyApp)getApplicationContext();
         final ArrayList<Episode> nextEpisode = new ArrayList<>();
         app.netQueue.add(new GetNextEpisodes(this, next, new Response.Listener<JSONObject>() {
@@ -126,7 +144,29 @@ public class MainActivity extends AppCompatActivity {
         }));
     }
 
+    private void openLoadingPortal() {
+        loadingPortal.setVisibility(View.VISIBLE);
+        loadingLbl.setVisibility(View.VISIBLE);
+
+        Animation an = new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF,0.5f,  Animation.RELATIVE_TO_SELF, 0.5f);
+        an.setDuration(1000);
+        an.setInterpolator(new LinearInterpolator());
+        an.setRepeatCount(-1);
+
+        loadingPortal.setAnimation(an);
+    }
+
+    private void closeLoadingPortal() {
+
+        loadingPortal.setAnimation(null);
+        loadingPortal.setVisibility(View.INVISIBLE);
+        loadingLbl.setVisibility(View.INVISIBLE);
+        myListView.setVisibility(View.VISIBLE);
+
+    }
+
     public void updateUI() {
         myEpisodeAdapter.notifyDataSetChanged();
+        closeLoadingPortal();
     }
 }

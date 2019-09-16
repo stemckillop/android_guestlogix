@@ -45,7 +45,6 @@
         android:text="TextView"
         android:textColor="@color/rickMortyTitleTextForeground"
         android:textSize="18sp"
-        android:textStyle="bold"
         app:fontFamily="casual" />
 
     <Space
