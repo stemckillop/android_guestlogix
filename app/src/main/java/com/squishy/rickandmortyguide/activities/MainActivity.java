@@ -23,6 +23,7 @@ import com.android.volley.Response;
 import com.squishy.rickandmortyguide.MyApp;
 import com.squishy.rickandmortyguide.R;
 import com.squishy.rickandmortyguide.adapter.EpisodeAdapter;
+import com.squishy.rickandmortyguide.listener.NetworkInterface;
 import com.squishy.rickandmortyguide.models.Episode;
 import com.squishy.rickandmortyguide.models.EpisodeRepository;
 import com.squishy.rickandmortyguide.requests.GetEpisodes;
@@ -33,7 +34,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NetworkInterface {
     private static String TAG = "MainActivity";
 
     String next;
@@ -54,16 +55,9 @@ public class MainActivity extends AppCompatActivity {
         loadingPortal = findViewById(R.id.main_img_portal);
         loadingLbl = findViewById(R.id.main_lbl_loading);
         myListView = findViewById(R.id.main_list_episodes);
-        swipeRefresh = findViewById(R.id.main_list_swipe);
 
         myEpisodeAdapter = new EpisodeAdapter(getApplicationContext(), new ArrayList<Episode>());
         myListView.setAdapter(myEpisodeAdapter);
-        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-
-            }
-        });
         myListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -85,12 +79,12 @@ public class MainActivity extends AppCompatActivity {
 
         model = ViewModelProviders.of(this).get(EpisodeRepository.class);
         model.setContext(getApplicationContext());
+        model.netInterface = this;
         openLoadingPortal();
         model.getEpisodeList().observe(this, new Observer<ArrayList<Episode>>() {
             @Override
             public void onChanged(ArrayList<Episode> episodes) {
                 myEpisodeAdapter.setEpisodes(episodes);
-                updateUI();
             }
         });
     }
@@ -116,8 +110,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
     public void updateUI() {
         myEpisodeAdapter.notifyDataSetChanged();
         closeLoadingPortal();
+    }
+
+    @Override
+    public void noInternet() {
+        loadingLbl.setText(getResources().getString(R.string.loading_no_internet));
     }
 }

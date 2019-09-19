@@ -14,6 +14,7 @@ import com.android.volley.Response;
 import com.squishy.rickandmortyguide.MyApp;
 import com.squishy.rickandmortyguide.activities.MainActivity;
 import com.squishy.rickandmortyguide.adapter.EpisodeAdapter;
+import com.squishy.rickandmortyguide.listener.NetworkInterface;
 import com.squishy.rickandmortyguide.requests.GetEpisodes;
 import com.squishy.rickandmortyguide.requests.GetNextEpisodes;
 
@@ -26,12 +27,14 @@ import java.util.List;
 public class EpisodeRepository extends ViewModel {
     private static String TAG = "EpisodeRepository";
 
+    public NetworkInterface netInterface;
     private Context ctx;
     public void setContext(Context ctx) {
         this.ctx = ctx;
     }
     private MutableLiveData<ArrayList<Episode>> episodesList;
-    private String next;
+    private String next = "";
+
 
     public EpisodeRepository() {
     }
@@ -77,7 +80,7 @@ public class EpisodeRepository extends ViewModel {
 
                         //myEpisodeAdapter = new EpisodeAdapter(getApplicationContext(), episodes);
                         //myListView.setAdapter(myEpisodeAdapter);
-                        //updateUI();
+                        netInterface.updateUI();
 
                     } catch (Exception e) {
                         Log.e(TAG, "Unable to build episode list...");
@@ -86,6 +89,7 @@ public class EpisodeRepository extends ViewModel {
             }));
         } else {
 
+            netInterface.noInternet();
             Toast.makeText(ctx, "You need internet access to get episode list...", Toast.LENGTH_SHORT).show();
 
         }
@@ -124,6 +128,8 @@ public class EpisodeRepository extends ViewModel {
                         ArrayList<Episode> epi = episodesList.getValue();
                         epi.addAll(nextEpisode);
                         episodesList.setValue(epi);
+
+                        netInterface.updateUI();
 
                     } catch (Exception e) {
                         Log.e(TAG, "Unable to add to episode list...");
