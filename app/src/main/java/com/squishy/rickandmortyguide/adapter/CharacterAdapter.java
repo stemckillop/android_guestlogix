@@ -62,31 +62,6 @@ public class CharacterAdapter extends RecyclerView.Adapter<CharacterAdapter.MyVi
                 frag.character = characters.get(position);
                 frag.ctx = ((EpisodeActivity)ctx);
                 frag.show(((EpisodeActivity)ctx).getSupportFragmentManager(), "frag");
-
-//                AlertDialog.Builder build = new AlertDialog.Builder(ctx);
-//                String msg = "";
-//                if (characters.get(position).status.equals("Alive")) {
-//                    msg = "Do you want to kill " + characters.get(position).name + "?";
-//                } else {
-//                    msg = "Do you want to revive " + characters.get(position).name + "?";
-//                }
-//                build.setMessage(msg)
-//                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialogInterface, int i) {
-//                                if (characters.get(position).status.equals("Alive")) {
-//                                    ((EpisodeActivity)ctx).killCharacter(position);
-//                                } else {
-//                                    ((EpisodeActivity)ctx).reviveCharacter(position);
-//                                }
-//                            }
-//                        })
-//                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialogInterface, int i) {
-//                                dialogInterface.dismiss();
-//                            }
-//                        }).create().show();
             }
         });
         holder.characterLbl.setText(characters.get(position).name);

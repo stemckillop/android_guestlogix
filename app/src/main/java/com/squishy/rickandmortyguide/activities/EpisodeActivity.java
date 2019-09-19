@@ -10,6 +10,7 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -64,12 +65,16 @@ public class EpisodeActivity extends AppCompatActivity {
         try {
             Intent i = getIntent();
             episode = i.getParcelableExtra("episode");
-            Log.e(TAG, episode.getName());
             lblTitle.setText(episode.getName());
-            getEpisodeCharacters();
+
+            if (MyApp.checkInternetConnection(getApplicationContext())) {
+                getEpisodeCharacters();
+            } else {
+                Toast.makeText(getBaseContext(), "You need internet access to request character list...", Toast.LENGTH_SHORT).show();
+            }
 
         } catch (NullPointerException e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, "Unable to get episode name");
         }
 
     }
@@ -118,7 +123,7 @@ public class EpisodeActivity extends AppCompatActivity {
                             dead.add(cha);
                         }
                     } catch (Exception e) {
-
+                        Log.e(TAG, "Unable to get characters...");
                     }
                 }
 
