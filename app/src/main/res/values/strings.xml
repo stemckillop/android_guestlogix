@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">RickAndMortyGuide</string>
+    <string name="loading_more">Loading More...</string>
 </resources>

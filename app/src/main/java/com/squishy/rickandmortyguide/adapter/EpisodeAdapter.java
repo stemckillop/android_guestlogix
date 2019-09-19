@@ -23,6 +23,12 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.MyViewHo
 
     public void addEpisodes(ArrayList<Episode> epi) {
         dataset.addAll(epi);
+        notifyDataSetChanged();
+    }
+
+    public void setEpisodes(ArrayList<Episode> epi) {
+        dataset = epi;
+        notifyDataSetChanged();
     }
 
     static class MyViewHolder extends RecyclerView.ViewHolder {

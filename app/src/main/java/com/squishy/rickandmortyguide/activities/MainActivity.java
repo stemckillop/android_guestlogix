@@ -2,6 +2,9 @@ package com.squishy.rickandmortyguide.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -21,6 +24,7 @@ import com.squishy.rickandmortyguide.MyApp;
 import com.squishy.rickandmortyguide.R;
 import com.squishy.rickandmortyguide.adapter.EpisodeAdapter;
 import com.squishy.rickandmortyguide.models.Episode;
+import com.squishy.rickandmortyguide.models.EpisodeRepository;
 import com.squishy.rickandmortyguide.requests.GetEpisodes;
 import com.squishy.rickandmortyguide.requests.GetNextEpisodes;
 
@@ -33,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private static String TAG = "MainActivity";
 
     String next;
+    private EpisodeRepository model;
     private ArrayList<Episode> episodes;
     private RecyclerView myListView;
     private EpisodeAdapter myEpisodeAdapter;
@@ -50,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
         loadingLbl = findViewById(R.id.main_lbl_loading);
         myListView = findViewById(R.id.main_list_episodes);
         swipeRefresh = findViewById(R.id.main_list_swipe);
+
+        myEpisodeAdapter = new EpisodeAdapter(getApplicationContext(), new ArrayList<Episode>());
+        myListView.setAdapter(myEpisodeAdapter);
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -62,103 +70,29 @@ public class MainActivity extends AppCompatActivity {
                 super.onScrollStateChanged(recyclerView, newState);
 
                 if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE && next != "") {
-                    if (MyApp.checkInternetConnection(getApplicationContext())) {
-                        getNextEpisodes();
-                    } else {
-                        Toast.makeText(getBaseContext(), "You need internet access to get more episodes...", Toast.LENGTH_SHORT).show();
+
+                    loadingLbl.setText(getResources().getString(R.string.loading_more));
+                    openLoadingPortal();
+                    myListView.setVisibility(View.INVISIBLE);
+                    if (!model.getNextEpisodes()) {
+                        closeLoadingPortal();
                     }
+
                 }
             }
         });
-        myLayoutManager = new LinearLayoutManager(this);
-        myListView.setLayoutManager(myLayoutManager);
+        myListView.setLayoutManager(new LinearLayoutManager(this));
 
-        if (MyApp.checkInternetConnection(getApplicationContext())) {
-            getEpisodes();
-        } else {
-            Toast.makeText(getBaseContext(), "You need internet access to get episode list...", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    void getEpisodes() {
+        model = ViewModelProviders.of(this).get(EpisodeRepository.class);
+        model.setContext(getApplicationContext());
         openLoadingPortal();
-        MyApp app = (MyApp)getApplicationContext();
-        app.netQueue.add(new GetEpisodes(this, new Response.Listener<JSONObject>() {
+        model.getEpisodeList().observe(this, new Observer<ArrayList<Episode>>() {
             @Override
-            public void onResponse(JSONObject response) {
-                        Log.e(TAG, response.toString());
-                        try {
-                            next = response.getJSONObject("info").getString("next");
-                            JSONArray episode = response.getJSONArray("results");
-                            episodes = new ArrayList<Episode>();
-                            for (int i = 0; i < episode.length(); i++) {
-                                JSONObject epi = episode.getJSONObject(i);
-                                int id = epi.getInt("id");
-                                String name = epi.getString("name");
-                                String url = epi.getString("url");
-                                String e = epi.getString("episode");
-                                JSONArray chars = epi.getJSONArray("characters");
-                                String[] characters = new String[chars.length()];
-                                for (int j = 0; j < chars.length(); j++) {
-                                    characters[j] = chars.getString(j);
-                                }
-                                episodes.add(new Episode(id, name, e, characters, url));
-                            }
-
-                            myEpisodeAdapter = new EpisodeAdapter(getApplicationContext(), episodes);
-                            myListView.setAdapter(myEpisodeAdapter);
-                    updateUI();
-
-                } catch (Exception e) {
-                    Log.e(TAG, "Unable to build episode list...");
-                }
+            public void onChanged(ArrayList<Episode> episodes) {
+                myEpisodeAdapter.setEpisodes(episodes);
+                updateUI();
             }
-        }));
-    }
-
-    void getNextEpisodes() {
-
-
-        if (next.equals("")) {
-            return;
-        }
-
-        loadingLbl.setText("Loading more...");
-        openLoadingPortal();
-        myListView.setVisibility(View.INVISIBLE);
-
-        MyApp app = (MyApp)getApplicationContext();
-        final ArrayList<Episode> nextEpisode = new ArrayList<>();
-        app.netQueue.add(new GetNextEpisodes(this, next, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Log.e(TAG, response.toString());
-                try {
-                    //int count = response.getJSONObject("info").getInt("count");
-                    next = response.getJSONObject("info").getString("next");
-                    JSONArray episode = response.getJSONArray("results");
-                    for (int i = 0; i < episode.length(); i++) {
-                        JSONObject epi = episode.getJSONObject(i);
-                        int id = epi.getInt("id");
-                        String name = epi.getString("name");
-                        String url = epi.getString("url");
-                        String e = epi.getString("episode");
-                        JSONArray chars = epi.getJSONArray("characters");
-                        String[] characters = new String[chars.length()];
-                        for (int j = 0; j < chars.length(); j++) {
-                            characters[j] = chars.getString(j);
-                        }
-                        nextEpisode.add(new Episode(id, name, e, characters, url));
-                    }
-
-                    myEpisodeAdapter.addEpisodes(nextEpisode);
-                    updateUI();
-
-                } catch (Exception e) {
-                    Log.e(TAG, "Unable to add to episode list...");
-                }
-            }
-        }));
+        });
     }
 
     private void openLoadingPortal() {
